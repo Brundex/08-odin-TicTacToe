@@ -1,63 +1,101 @@
-const DisplayController = (() => {
-    const board = document.getElementById('gameboard');
-    const clear = document.getElementById('clear');
-    for (let i = 0; i < 3; i++) {
-        for (let j = 0; j < 3; j++) {
-            const cell = document.createElement('div');
-            cell.className = 'cell'
-            board.appendChild(cell);
-        }
+let winner = "NO WINNER"
+const rows = 3;
+const columns = 3;  
+const board = [
+    [0,0,0],
+    [0,0,0],
+    [0,0,0]
+];
+
+let currentPlayer = "X";
+
+function togglePlayer() {
+    if (currentPlayer === "X") {
+        currentPlayer = "O";
+    }
+    else {
+        currentPlayer = "X";
+    }
 }
-})();
 
-//     return {makeMove, clearBoard}
-// }
+function ScreenController() {
+    const clear = document.getElementById('clear');
+    const cell = document.querySelectorAll('.cell');
+    const declareTurn = document.querySelector('#declare-turn');
 
+    clear.addEventListener('click', clearBoard);
 
-// function Gameboard() {
-//     const rows = 3;
-//     const columns = 3;
-//     const board = [];
+    cell.forEach(item => {
+        item.addEventListener('click', () => {
+            if (item.innerHTML === "X" || item.innerHTML === "O") {
+                return
+            }
+            if (winner === "THERE IS A WINNER"){
+                return
+            }
+            const i = parseInt(item.id.charAt(0));
+            const j = parseInt(item.id.charAt(1));          
 
-//     for (let i = 0; i < rows; i++) {
-//         board[i] = [];
-//         for (let j = 0; j < columns; j++) {
-//             board[i][j] = 0;
-//         }
-//     }
-// }
-
-// function Player() {
-//     return {symbol, move}
-// }
-
-
-// function Game() {
+            board[i][j] = currentPlayer;
+            item.innerHTML = currentPlayer;
+            if (checkGameOver(currentPlayer) === true) {
+                declareTurn.innerHTML = `${currentPlayer} WINS. GAME OVER`;
+                return
+            }
+            togglePlayer();
+            declareTurn.innerHTML = `${currentPlayer}'S TURN`; 
+                     
+        }
+        )});
     
-// }
 
-// function checkGameOver(player) {
-//     if ((board[0][0] === player && board[0][1] === player && board[0][2] === player) ||
-//         (board[1][0] === player && board[1][1] === player && board[1][2] === player) ||
-//         (board[2][0] === player && board[2][1] === player && board[2][2] === player) ||
-//         (board[0][0] === player && board[1][0] === player && board[2][0] === player) ||
-//         (board[0][1] === player && board[1][1] === player && board[2][1] === player) ||
-//         (board[0][2] === player && board[1][2] === player && board[2][2] === player) ||
-//         (board[0][0] === player && board[1][1] === player && board[2][2] === player) ||
-//         (board[0][2] === player && board[1][1] === player && board[2][0] === player)) {
-//             console.log("THERE IS A WINNER");
-//         }
-//         else {
-//             for (let i = 0; i < rows; i++) {
-//                 for (let j = 0; j < columns; j++) {
-//                     if (board[i][j] === 0) {
-//                         console.log(`[${i}][${j}] is 0. Game still on`);
-//                     }
-//                     else {
-//                         console.log("IT'S A TIE");
-//                         break
-//                 }
-//             }
-//         }
-//     }
-// }
+    function clearBoard() {
+        cell.forEach(item => {
+            item.innerHTML = "";
+        });
+
+        for (let i = 0; i < rows; i++) {
+            for (let j = 0; j < columns; j++) {
+                board[i][j] = 0;
+            }
+        }
+        currentPlayer = "X";
+        declareTurn.innerHTML = `X'S TURN`;
+    }     
+    
+    return {
+        clear,
+        cell,
+    }
+};
+
+function checkGameOver(player) { 
+    if ((board[0][0] === player && board[0][1] === player && board[0][2] === player) ||
+        (board[1][0] === player && board[1][1] === player && board[1][2] === player) ||
+        (board[2][0] === player && board[2][1] === player && board[2][2] === player) ||
+        (board[0][0] === player && board[1][0] === player && board[2][0] === player) ||
+        (board[0][1] === player && board[1][1] === player && board[2][1] === player) ||
+        (board[0][2] === player && board[1][2] === player && board[2][2] === player) ||
+        (board[0][0] === player && board[1][1] === player && board[2][2] === player) ||
+        (board[0][2] === player && board[1][1] === player && board[2][0] === player)) {
+            alert(`${player} WINS!`);
+            winner = "THERE IS A WINNER";
+            return true
+        }
+    else if (checkTie() === true) {
+        alert("IT'S A TIE");
+    }
+}
+
+function checkTie() {
+    for (let i = 0; i < rows; i++) {
+        for (let j = 0; j < columns; j++) {
+            if (board[i][j] === 0) {
+                return false
+            }
+        }
+    }
+    return true
+}
+
+ScreenController();
