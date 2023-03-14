@@ -88,14 +88,7 @@ function checkGameOver(player) {
 }
 
 function checkTie() {
-    for (let i = 0; i < rows; i++) {
-        for (let j = 0; j < columns; j++) {
-            if (board[i][j] === 0) {
-                return false
-            }
-        }
-    }
-    return true
+    return board.every(row => row.every(cell => cell !== 0));
 }
 
 ScreenController();
